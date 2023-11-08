@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">AllTrails Lunch</string>
+
+    <string name="bullet_separator">•</string>
+
+    <string name="restaurant_list_item_image_content_description">Restaurant Image</string>
+    <string name="bookmark_resting_icon_content_description">Not Saved</string>
+    <string name="bookmark_saved_icon_content_description">Saved</string>
+    <string name="star_icon_content_description">Star</string>
 </resources>

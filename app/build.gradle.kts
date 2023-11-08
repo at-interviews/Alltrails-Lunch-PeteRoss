@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.alltrails.lunch.app"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.alltrails.lunch.app"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
