@@ -22,6 +22,21 @@ val Typography = Typography(
         lineHeight = 24.sp,
         color = TextPrimary
     ),
+    titleSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 19.5.sp,
+        color = TextPrimary
+    ),
+    bodySmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 19.5.sp,
+        color = TextSecondary
+    ),
+
 
 
     /* Other default text styles to override
