@@ -18,15 +18,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.alltrails.lunch.app.R
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.alltrails.lunch.app.viewModel.MainViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
+import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel : MainViewModel = koinViewModel()) {
   Scaffold(
     topBar = {
       TopAppBar(
