@@ -3,6 +3,7 @@ package com.alltrails.lunch.app.ui
 import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -21,6 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.alltrails.lunch.app.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +57,14 @@ fun MainScreen() {
       )
 
       if (locationPermissionsState.allPermissionsGranted) {
-        Text(text = "GRANTED")
+        val singapore = LatLng(1.35, 103.87)
+        val cameraPositionState = rememberCameraPositionState {
+          position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        }
+        GoogleMap(
+          modifier = Modifier.fillMaxSize(),
+          cameraPositionState = cameraPositionState
+        )
       } else if (locationPermissionsState.shouldShowRationale) {
         Column {
           Text(stringResource(id = R.string.permission_denied_explainer))
