@@ -20,13 +20,15 @@ import com.alltrails.lunch.app.ui.theme.AllTrailsLunchTheme
 import com.alltrails.lunch.app.ui.theme.Background
 import com.alltrails.lunch.app.ui.theme.Padding1_5x
 import com.alltrails.lunch.app.ui.theme.Padding1x
+import com.alltrails.lunch.app.viewModel.MainViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun RestaurantsScreen(modifier: Modifier = Modifier) {
+fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel = koinViewModel()) {
   val singapore = LatLng(1.35, 103.87)
   val cameraPositionState = rememberCameraPositionState {
     position = CameraPosition.fromLatLngZoom(singapore, 10f)

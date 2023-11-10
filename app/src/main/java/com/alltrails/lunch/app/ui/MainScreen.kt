@@ -17,12 +17,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.alltrails.lunch.app.R
-import com.alltrails.lunch.app.viewModel.MainViewModel
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel : MainViewModel = koinViewModel()) {
+fun MainScreen() {
   Scaffold(
     topBar = {
       TopAppBar(

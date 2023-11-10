@@ -14,7 +14,6 @@ fun LocationPermissionHandler(
   onPermissionGranted : @Composable (Modifier) -> Unit,
   modifier: Modifier = Modifier,
   ) {
-//  Column(modifier = modifier) {
     val locationPermissionsState = rememberMultiplePermissionsState(
       permissions = listOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -31,5 +30,4 @@ fun LocationPermissionHandler(
         locationPermissionsState.launchMultiplePermissionRequest()
       }
     }
-//  }
 }
