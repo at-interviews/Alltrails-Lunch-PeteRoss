@@ -1,7 +1,6 @@
 package com.alltrails.lunch.app.ui
 
 import android.Manifest
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -11,11 +10,11 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionHandler(
-  onPermissionDenied : @Composable (onPermissionRequested: () -> Unit) -> Unit,
-  onPermissionGranted : @Composable () -> Unit,
+  onPermissionDenied : @Composable (modifier: Modifier, onPermissionRequested: () -> Unit) -> Unit,
+  onPermissionGranted : @Composable (Modifier) -> Unit,
   modifier: Modifier = Modifier,
   ) {
-  Column(modifier = modifier) {
+//  Column(modifier = modifier) {
     val locationPermissionsState = rememberMultiplePermissionsState(
       permissions = listOf(
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -24,13 +23,13 @@ fun LocationPermissionHandler(
     )
 
     if (locationPermissionsState.allPermissionsGranted) {
-      onPermissionGranted()
+      onPermissionGranted(modifier)
     } else if (locationPermissionsState.shouldShowRationale) {
-      onPermissionDenied { locationPermissionsState.launchMultiplePermissionRequest() }
+      onPermissionDenied(modifier) { locationPermissionsState.launchMultiplePermissionRequest() }
     } else {
       LaunchedEffect("Permission") {
         locationPermissionsState.launchMultiplePermissionRequest()
       }
     }
-  }
+//  }
 }
