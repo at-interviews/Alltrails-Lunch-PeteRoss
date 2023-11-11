@@ -24,6 +24,7 @@ class MainViewModel(
     viewModelScope.launch {
       locationProvider.getLastKnownLocation()?.let {
         state.dispatch(Action.OnLocationUpdated(it.latitude, it.longitude))
+        handleQuerySubmitted("", it.latitude, it.longitude)
       }
     }
   }
