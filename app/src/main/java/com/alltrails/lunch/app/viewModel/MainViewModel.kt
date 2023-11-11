@@ -32,7 +32,7 @@ class MainViewModel(
   override fun reducer(state: RestaurantsViewState, action: Action): RestaurantsViewState {
     return when (action) {
       is Action.OnLocationUpdated -> state.copy(lat = action.lat, lon = action.lon)
-      is Action.OnResultsUpdated -> state.copy(results = action.restaurants.map {
+      is Action.OnResultsUpdated -> state.copy(loading = false, results = action.restaurants.map {
         Restaurant(
           it.name,
           it.placeId,
@@ -45,7 +45,7 @@ class MainViewModel(
           lon = it.geometry.location.lon
         )
       })
-      is Action.OnQueryChanged -> state.copy(query = action.query)
+      is Action.OnQuerySubmitted -> state.copy(loading = true)
     }
   }
 
@@ -54,11 +54,11 @@ class MainViewModel(
       is UiEvent.OnFavoriteToggled ->Unit // TODO()
       is UiEvent.OnQuerySubmitted -> handleQuerySubmitted(event.query, event.lat, event.lon)
       UiEvent.OnScreenToggled -> Unit // TODO()
-      is UiEvent.OnQueryChanged -> state.dispatch(Action.OnQueryChanged(event.query))
     }
   }
 
   private fun handleQuerySubmitted(query: String, lat: Double, lon: Double) = viewModelScope.launch {
+    state.dispatch(Action.OnQuerySubmitted)
     val results = placesService.nearbyRestaurants("$lat,$lon", query)
     state.dispatch(Action.OnResultsUpdated(results!!.results))
   }
@@ -70,13 +70,12 @@ class MainViewModel(
   sealed interface Action {
     data class OnLocationUpdated(val lat: Double, val lon: Double): Action
     data class OnResultsUpdated(val restaurants: List<Place>): Action
-    data class OnQueryChanged(val query: String): Action
+    object OnQuerySubmitted: Action
   }
 
   sealed interface UiEvent {
     object OnScreenToggled: UiEvent
     data class OnFavoriteToggled(val id: String, val favorite: Boolean) : UiEvent
     data class OnQuerySubmitted(val query: String, val lat: Double, val lon: Double) : UiEvent
-    data class OnQueryChanged(val query: String) : UiEvent
   }
 }

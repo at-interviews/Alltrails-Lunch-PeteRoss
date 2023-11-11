@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -62,7 +65,7 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
   
   RestaurantsScreen(
     modifier,
-    viewState.query,
+    viewState.loading,
     viewState.lat,
     viewState.lon,
     viewState.results,
@@ -74,7 +77,7 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
 @Composable
 fun RestaurantsScreen(
   modifier: Modifier = Modifier,
-  query2: String,
+  isLoading: Boolean,
   lat: Double,
   lon: Double,
   restaurants: List<Restaurant>,
@@ -84,37 +87,17 @@ fun RestaurantsScreen(
     .fillMaxSize()
     .background(Color.White)
   ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    var query: String by remember { mutableStateOf("") }
-    TextField(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(
-          start = Padding1_5x,
-          end = Padding1_5x,
-          bottom = Padding1x,
-        )
-        .clip(shape = RoundedCornerShape(Padding1x))
-        .background(Background),
-      value = query,
-      leadingIcon = { Image(painter = painterResource(id = R.drawable.search), null) },
-      onValueChange = { query = it },
-      placeholder = { Text(text = "Search restaurants") },
-      singleLine = true,
-      keyboardActions = KeyboardActions(
-        onSearch =  {
-          onUiEvent(MainViewModel.UiEvent.OnQuerySubmitted(query, lat, lon))
-          keyboardController?.hide()
-        }
-      ),
-      keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-    )
+    SearchBar(onUiEvent, lat, lon)
 
     var showMap by remember { mutableStateOf(false) }
-
     Box(modifier = Modifier.fillMaxSize()) {
-      if (showMap) {
+      if (isLoading) {
+        CircularProgressIndicator(
+          modifier = Modifier.width(64.dp).align(Alignment.Center),
+          color = MaterialTheme.colorScheme.surfaceVariant,
+          trackColor = MaterialTheme.colorScheme.secondary,
+        )
+      } else if (showMap) {
         Map(lat, lon, restaurants)
       } else {
         List(restaurants)
@@ -139,6 +122,41 @@ fun RestaurantsScreen(
     }
 
   }
+}
+
+@Composable
+@OptIn(ExperimentalComposeUiApi::class)
+private fun SearchBar(
+  onUiEvent: (MainViewModel.UiEvent) -> Unit,
+  lat: Double,
+  lon: Double
+) {
+  val keyboardController = LocalSoftwareKeyboardController.current
+
+  var query: String by remember { mutableStateOf("") }
+  TextField(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(
+        start = Padding1_5x,
+        end = Padding1_5x,
+        bottom = Padding1x,
+      )
+      .clip(shape = RoundedCornerShape(Padding1x))
+      .background(Background),
+    value = query,
+    leadingIcon = { Image(painter = painterResource(id = R.drawable.search), null) },
+    onValueChange = { query = it },
+    placeholder = { Text(text = "Search restaurants") },
+    singleLine = true,
+    keyboardActions = KeyboardActions(
+      onSearch = {
+        onUiEvent(MainViewModel.UiEvent.OnQuerySubmitted(query, lat, lon))
+        keyboardController?.hide()
+      }
+    ),
+    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+  )
 }
 
 @Composable
