@@ -7,4 +7,9 @@
     <string name="request_location_permissions_button">Request Location Permissions</string>
     <string name="bookmark_resting_icon_content_description">Not Saved</string>
     <string name="bookmark_saved_icon_content_description">Saved</string>
+
+    <string name="main_fab_map">Map</string>
+    <string name="main_fab_list">List</string>
+    <string name="main_fab_content_description_show_map">Show Map</string>
+    <string name="main_fab_content_description_show_list">Show List</string>
 </resources>
