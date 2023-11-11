@@ -1,5 +1,8 @@
 package com.alltrails.lunch.app.ui
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,12 +17,17 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.alltrails.lunch.app.R
 import com.alltrails.lunch.app.ui.theme.AllTrailsLunchTheme
 import com.alltrails.lunch.app.ui.theme.Background
@@ -28,8 +36,13 @@ import com.alltrails.lunch.app.ui.theme.Padding1x
 import com.alltrails.lunch.app.viewModel.MainViewModel
 import com.alltrails.lunch.app.viewModel.Restaurant
 import com.alltrails.lunch.app.viewModel.RestaurantsViewState
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MarkerInfoWindow
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import org.koin.androidx.compose.koinViewModel
 
@@ -46,7 +59,6 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
   )
 }
 
-
 @Composable
 fun RestaurantsScreen(
   modifier: Modifier = Modifier,
@@ -55,11 +67,6 @@ fun RestaurantsScreen(
   restaurants: List<Restaurant>,
   onUiEvent: (MainViewModel.UiEvent) -> Unit
 ) {
-  val currentPosition = LatLng(lat, lon)
-  val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(currentPosition, 1f)
-  }
-
   Column(modifier = modifier
     .fillMaxSize()
     .background(Color.White)) {
@@ -85,18 +92,47 @@ fun RestaurantsScreen(
       Text("Test the query")
     }
 
-    LazyColumn(modifier = Modifier.background(Background)) {
-      items(count = restaurants.size) {
-        RestaurantListItem(
-          restaurant = restaurants[it],
-          modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x)
-        )
+    var showMap by remember { mutableStateOf(false) }
+    Button(onClick = { showMap = !showMap }) {
+      Text("Toggle Map")
+    }
+
+    if (showMap) {
+
+      val currentPosition = LatLng(lat, lon)
+      val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(currentPosition, 12f)
+      }
+
+      GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState
+      ) {
+        restaurants.forEach { restaurant ->
+          val context = LocalContext.current
+          MarkerInfoWindow(
+            state = MarkerState(position = LatLng(restaurant.lat, restaurant.lon)),
+            icon = bitmapDescriptorFromVector(context, R.drawable.pin_resting),
+            onInfoWindowClose = { it.setIcon(bitmapDescriptorFromVector(context, R.drawable.pin_resting)) },
+            onClick = {
+              it.setIcon(bitmapDescriptorFromVector(context, R.drawable.pin_selected))
+              false
+            }
+          ) {
+            RestaurantListItem(restaurant = restaurant, modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x))
+          }
+        }
+      }
+    } else {
+      LazyColumn(modifier = Modifier.background(Background)) {
+        items(count = restaurants.size) {
+          RestaurantListItem(
+            restaurant = restaurants[it],
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x)
+          )
+        }
       }
     }
-//    GoogleMap(
-//      modifier = Modifier.fillMaxSize(),
-//      cameraPositionState = cameraPositionState
-//    )
   }
 }
 
@@ -105,5 +141,14 @@ fun RestaurantsScreen(
 fun RestaurantsScreenPreview() {
   AllTrailsLunchTheme {
     RestaurantsScreen()
+  }
+}
+
+private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
+  return ContextCompat.getDrawable(context, vectorResId)?.run {
+    setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+    val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
+    draw(Canvas(bitmap))
+    BitmapDescriptorFactory.fromBitmap(bitmap)
   }
 }
