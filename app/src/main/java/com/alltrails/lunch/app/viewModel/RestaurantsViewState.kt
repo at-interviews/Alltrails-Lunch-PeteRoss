@@ -14,4 +14,6 @@ data class Restaurant(
   val ratingsCount: String,
   val supportingText: String,
   val isFavorite: Boolean,
+  val lat: Double,
+  val lon: Double,
 )

@@ -6,6 +6,7 @@ import com.alltrails.lunch.app.network.Place
 import com.alltrails.lunch.app.network.PlacesService
 import com.alltrails.lunch.app.usecase.LocationUpdatesUseCase
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 
 @SuppressLint("MissingPermission")
 class MainViewModel(
@@ -34,11 +35,13 @@ class MainViewModel(
         Restaurant(
           it.name,
           it.placeId,
-          null,
-          "",
-          "",
+          it.photos.first().toImageUrl(),
+          "${it.rating}",
+          NumberFormat.getNumberInstance().format(it.ratingsCount),
           "support",
-          false
+          false,
+          lat = it.geometry.location.lat,
+          lon = it.geometry.location.lon
         )
       })
     }
@@ -52,20 +55,13 @@ class MainViewModel(
     }
   }
 
-//  fun onQuerySubmitted() {
-//    viewModelScope.launch {
-//      try {
-//        val latLongQueryString = "$lat,$lon"
-//        placesService.nearbyRestaurants(latLongQueryString)
-//      } catch (e: Exception) {
-//        Log.d("SLKDJLJK", "SLKDFJ")
-//      }
-//    }
-//  }
-
   private fun handleQuerySubmitted(query: String, lat: Double, lon: Double) = viewModelScope.launch {
     val results = placesService.nearbyRestaurants("$lat,$lon", query)
     state.dispatch(MainViewModel.Action.OnResultsUpdated(results!!.results))
+  }
+
+  private fun Place.PlacePhoto.toImageUrl(): String {
+    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${reference}&key=AIzaSyCqWHKkgLxJiSwS63bxfWpQ-XhSQs65H5c"
   }
 
   sealed interface Action {
