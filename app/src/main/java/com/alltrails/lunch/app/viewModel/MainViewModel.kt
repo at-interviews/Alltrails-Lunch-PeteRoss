@@ -62,7 +62,7 @@ class MainViewModel(
   }
 
   private fun Place.PlacePhoto.toImageUrl(): String {
-    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${reference}&key=AIzaSyCqWHKkgLxJiSwS63bxfWpQ-XhSQs65H5c"
+    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=64&maxheight=72&photo_reference=${reference}&key=AIzaSyCqWHKkgLxJiSwS63bxfWpQ-XhSQs65H5c"
   }
 
   sealed interface Action {

@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.alltrails.lunch.app.R
 import com.alltrails.lunch.app.ui.theme.AllTrailsLunchTheme
 import com.alltrails.lunch.app.ui.theme.Background
@@ -84,9 +85,12 @@ fun RestaurantsScreen(
       Text("Test the query")
     }
 
-    LazyColumn {
+    LazyColumn(modifier = Modifier.background(Background)) {
       items(count = restaurants.size) {
-        RestaurantListItem(restaurant = restaurants[it])
+        RestaurantListItem(
+          restaurant = restaurants[it],
+          modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x)
+        )
       }
     }
 //    GoogleMap(
