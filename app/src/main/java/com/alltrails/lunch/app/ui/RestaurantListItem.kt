@@ -26,6 +26,19 @@ import com.alltrails.lunch.app.ui.theme.PaddingInner
 import com.alltrails.lunch.app.ui.theme.RestaurantItemImageHeight
 import com.alltrails.lunch.app.ui.theme.RestaurantItemImageWidth
 import com.alltrails.lunch.app.ui.theme.SpacingSmall
+import com.alltrails.lunch.app.viewModel.Restaurant
+
+@Composable
+fun RestaurantListItem(restaurant: Restaurant) {
+  RestaurantListItem(
+    imageUrl = restaurant.imageUrl,
+    restaurantName = restaurant.name,
+    rating = restaurant.rating,
+    ratingsCount = restaurant.ratingsCount,
+    supportingText = restaurant.supportingText,
+    isFavorite = restaurant.isFavorite,
+  )
+}
 
 @Composable
 fun RestaurantListItem(

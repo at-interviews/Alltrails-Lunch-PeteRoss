@@ -1,15 +1,12 @@
 package com.alltrails.lunch.app.network
 
-import retrofit2.http.Body
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface PlacesService {
-  @Headers(
-    "Content-Type: application/json",
-    "X-Goog-Api-Key: AIzaSyCqWHKkgLxJiSwS63bxfWpQ-XhSQs65H5c",
-    "X-Goog-FieldMask: places.displayName,places.formattedAddress"
-  )
-  @POST("v1/places:searchNearby")
-  suspend fun nearbyRestaurants(@Body nearbySearch: NearbySearch): PlacesResponse?
+  @GET("nearbysearch/json?radius=5000&type=restaurant&key=AIzaSyCqWHKkgLxJiSwS63bxfWpQ-XhSQs65H5c")
+  suspend fun nearbyRestaurants(
+    @Query("location") location: String,
+    @Query("keyword") query: String
+  ): PlacesResponse?
 }
