@@ -1,6 +1,7 @@
 package com.alltrails.lunch.app.viewModel
 
 data class RestaurantsViewState(
+  val query: String = "",
   val lat: Double,
   val lon: Double,
   val results: List<Restaurant>

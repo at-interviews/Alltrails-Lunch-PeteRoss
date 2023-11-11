@@ -12,7 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -24,12 +25,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -58,6 +62,7 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
   
   RestaurantsScreen(
     modifier,
+    viewState.query,
     viewState.lat,
     viewState.lon,
     viewState.results,
@@ -65,9 +70,11 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
   )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RestaurantsScreen(
   modifier: Modifier = Modifier,
+  query2: String,
   lat: Double,
   lon: Double,
   restaurants: List<Restaurant>,
@@ -75,7 +82,11 @@ fun RestaurantsScreen(
 ) {
   Column(modifier = modifier
     .fillMaxSize()
-    .background(Color.White)) {
+    .background(Color.White)
+  ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var query: String by remember { mutableStateOf("") }
     TextField(
       modifier = Modifier
         .fillMaxWidth()
@@ -85,19 +96,20 @@ fun RestaurantsScreen(
           bottom = Padding1x,
         )
         .clip(shape = RoundedCornerShape(Padding1x))
-        .background(Background)
-//        .height(SearchbarHeight)
-      ,
-      value = "",
+        .background(Background),
+      value = query,
       leadingIcon = { Image(painter = painterResource(id = R.drawable.search), null) },
-      onValueChange = {},
-      placeholder = { Text(text = "Search restaurants") }
+      onValueChange = { query = it },
+      placeholder = { Text(text = "Search restaurants") },
+      singleLine = true,
+      keyboardActions = KeyboardActions(
+        onSearch =  {
+          onUiEvent(MainViewModel.UiEvent.OnQuerySubmitted(query, lat, lon))
+          keyboardController?.hide()
+        }
+      ),
+      keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
     )
-
-    Button(onClick = { onUiEvent(MainViewModel.UiEvent.OnQuerySubmitted("Italian", lat, lon))}) {
-      Text("Test the query")
-    }
-
 
     var showMap by remember { mutableStateOf(false) }
 

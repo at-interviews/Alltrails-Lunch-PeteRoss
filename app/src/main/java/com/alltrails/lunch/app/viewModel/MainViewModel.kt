@@ -36,7 +36,7 @@ class MainViewModel(
         Restaurant(
           it.name,
           it.placeId,
-          it.photos.first().toImageUrl(),
+          it.photos.firstOrNull()?.toImageUrl(),
           "${it.rating}",
           NumberFormat.getNumberInstance().format(it.ratingsCount),
           "support",
@@ -45,6 +45,7 @@ class MainViewModel(
           lon = it.geometry.location.lon
         )
       })
+      is Action.OnQueryChanged -> state.copy(query = action.query)
     }
   }
 
@@ -53,17 +54,13 @@ class MainViewModel(
       is UiEvent.OnFavoriteToggled ->Unit // TODO()
       is UiEvent.OnQuerySubmitted -> handleQuerySubmitted(event.query, event.lat, event.lon)
       UiEvent.OnScreenToggled -> Unit // TODO()
-      is UiEvent.OnRestaurantSelected -> handleRestaurantSelection(event.id, event.selected)
+      is UiEvent.OnQueryChanged -> state.dispatch(Action.OnQueryChanged(event.query))
     }
   }
 
   private fun handleQuerySubmitted(query: String, lat: Double, lon: Double) = viewModelScope.launch {
     val results = placesService.nearbyRestaurants("$lat,$lon", query)
     state.dispatch(Action.OnResultsUpdated(results!!.results))
-  }
-
-  private fun handleRestaurantSelection(id: String, selected: Boolean) {
-
   }
 
   private fun Place.PlacePhoto.toImageUrl(): String {
@@ -73,12 +70,13 @@ class MainViewModel(
   sealed interface Action {
     data class OnLocationUpdated(val lat: Double, val lon: Double): Action
     data class OnResultsUpdated(val restaurants: List<Place>): Action
+    data class OnQueryChanged(val query: String): Action
   }
 
   sealed interface UiEvent {
     object OnScreenToggled: UiEvent
     data class OnFavoriteToggled(val id: String, val favorite: Boolean) : UiEvent
     data class OnQuerySubmitted(val query: String, val lat: Double, val lon: Double) : UiEvent
-    data class OnRestaurantSelected(val id: String, val selected: Boolean) : UiEvent
+    data class OnQueryChanged(val query: String) : UiEvent
   }
 }
