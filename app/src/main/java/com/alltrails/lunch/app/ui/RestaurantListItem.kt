@@ -1,6 +1,7 @@
 package com.alltrails.lunch.app.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,27 +36,32 @@ import com.alltrails.lunch.app.viewModel.Restaurant
 @Composable
 fun RestaurantListItem(
   restaurant: Restaurant,
+  onFavoriteClicked: (String) -> Unit,
   modifier: Modifier = Modifier
   ) {
   RestaurantListItem(
+    id = restaurant.id,
     imageUrl = restaurant.imageUrl,
     restaurantName = restaurant.name,
     rating = restaurant.rating,
     ratingsCount = restaurant.ratingsCount,
     supportingText = restaurant.supportingText,
     isFavorite = restaurant.isFavorite,
+    onFavoriteClicked = onFavoriteClicked,
     modifier = modifier,
   )
 }
 
 @Composable
 fun RestaurantListItem(
+  id: String,
   imageUrl: String?,
   restaurantName: String,
   rating: String,
   ratingsCount: String,
   supportingText: String,
   isFavorite: Boolean,
+  onFavoriteClicked: (String) -> Unit,
   modifier: Modifier = Modifier
 ) {
   ElevatedCard(
@@ -99,7 +105,8 @@ fun RestaurantListItem(
           }
           Image(
             painter = painterResource(id = imageRes),
-            contentDescription = stringResource(id = contentDescription)
+            contentDescription = stringResource(id = contentDescription),
+            modifier = Modifier.clickable { onFavoriteClicked(id) },
           )
         }
 
@@ -131,12 +138,14 @@ fun RestaurantListItem(
 fun RestaurantListItemPreview() {
   AllTrailsLunchTheme {
     RestaurantListItem(
+      id = "id",
       imageUrl = "imageUrl",
       restaurantName = "Cellar Door Provisions",
       rating = "4.8",
       ratingsCount = "(1,324)",
       supportingText = "It's great!",
       isFavorite = false,
+      onFavoriteClicked = {}
     )
   }
 }

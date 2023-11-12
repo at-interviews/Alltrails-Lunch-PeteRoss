@@ -92,6 +92,8 @@ fun RestaurantsScreen(
     SearchBar(onUiEvent, lat, lon)
 
     var showMap by remember { mutableStateOf(shouldShowMapInitially) }
+    val onFavoriteClick: (String) -> Unit = { onUiEvent(MainViewModel.UiEvent.OnFavoriteToggled(it)) }
+
     Box(modifier = Modifier.fillMaxSize()) {
       if (isLoading) {
         CircularProgressIndicator(
@@ -100,9 +102,9 @@ fun RestaurantsScreen(
           trackColor = MaterialTheme.colorScheme.secondary,
         )
       } else if (showMap) {
-        Map(lat, lon, restaurants)
+        Map(lat, lon, restaurants, onFavoriteClick)
       } else {
-        List(restaurants)
+        List(restaurants, onFavoriteClick)
       }
 
       val fabIcon = if (showMap) R.drawable.list else R.drawable.map
@@ -165,11 +167,15 @@ private fun SearchBar(
 }
 
 @Composable
-private fun List(restaurants: List<Restaurant>) {
+private fun List(
+  restaurants: List<Restaurant>,
+  onFavoriteClick: (String) -> Unit,
+  ) {
   LazyColumn(modifier = Modifier.background(Background)) {
     items(count = restaurants.size) {
       RestaurantListItem(
         restaurant = restaurants[it],
+        onFavoriteClicked = onFavoriteClick,
         modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x)
       )
     }
@@ -180,8 +186,9 @@ private fun List(restaurants: List<Restaurant>) {
 private fun Map(
   lat: Double,
   lon: Double,
-  restaurants: List<Restaurant>
-) {
+  restaurants: List<Restaurant>,
+  onFavoriteClick: (String) -> Unit,
+  ) {
   val currentPosition = LatLng(lat, lon)
   val cameraPositionState = rememberCameraPositionState {
     position = CameraPosition.fromLatLngZoom(currentPosition, 12f)
@@ -211,6 +218,7 @@ private fun Map(
       ) {
         RestaurantListItem(
           restaurant = restaurant,
+          onFavoriteClicked = onFavoriteClick,
           modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x)
         )
       }

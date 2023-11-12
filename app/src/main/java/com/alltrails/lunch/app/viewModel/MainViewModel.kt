@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.alltrails.lunch.app.network.Place
 import com.alltrails.lunch.app.network.PlacesService
 import com.alltrails.lunch.app.usecase.DisplayPreferences
+import com.alltrails.lunch.app.usecase.FavoritesManager
 import com.alltrails.lunch.app.usecase.LocationUpdatesUseCase
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -14,6 +15,7 @@ class MainViewModel(
   private val placesService: PlacesService,
   private val locationProvider: LocationUpdatesUseCase,
   private val displayPreferences: DisplayPreferences,
+  private val favoritesManager: FavoritesManager,
   ): BaseViewModel<RestaurantsViewState, MainViewModel.Action, MainViewModel.UiEvent>(
     RestaurantsViewState(
       showMap = displayPreferences.shouldShowMap,
@@ -43,21 +45,35 @@ class MainViewModel(
           "${it.rating}",
           NumberFormat.getNumberInstance().format(it.ratingsCount),
           "support",
-          false,
+          favoritesManager.isFavorite(it.placeId),
           lat = it.geometry.location.lat,
           lon = it.geometry.location.lon
         )
       })
+      is Action.OnFavoriteToggled -> {
+        val alteredRestaurant = state.results.find {
+          it.id == action.restaurantId
+        }!!.copy(isFavorite = favoritesManager.isFavorite(action.restaurantId))
+
+        state.copy(results = state.results.map {
+          if (it.id == action.restaurantId) alteredRestaurant else it
+        })
+      }
       is Action.OnQuerySubmitted -> state.copy(loading = true)
     }
   }
 
   override fun handleUIEvent(event: UiEvent) {
     when(event) {
-      is UiEvent.OnFavoriteToggled ->Unit // TODO()
+      is UiEvent.OnFavoriteToggled -> handleFavoriteToggled(event.id)
       is UiEvent.OnQuerySubmitted -> handleQuerySubmitted(event.query, event.lat, event.lon)
       is UiEvent.OnScreenToggled -> displayPreferences.shouldShowMap = event.shouldShowMap
     }
+  }
+
+  private fun handleFavoriteToggled(restaurantId: String) {
+    favoritesManager.toggleFavorite(restaurantId)
+    state.dispatch(Action.OnFavoriteToggled(restaurantId))
   }
 
   private fun handleQuerySubmitted(query: String, lat: Double, lon: Double) = viewModelScope.launch {
@@ -73,12 +89,13 @@ class MainViewModel(
   sealed interface Action {
     data class OnLocationUpdated(val lat: Double, val lon: Double): Action
     data class OnResultsUpdated(val restaurants: List<Place>): Action
+    data class OnFavoriteToggled(val restaurantId: String): Action
     object OnQuerySubmitted: Action
   }
 
   sealed interface UiEvent {
     data class OnScreenToggled(val shouldShowMap: Boolean): UiEvent
-    data class OnFavoriteToggled(val id: String, val favorite: Boolean) : UiEvent
+    data class OnFavoriteToggled(val id: String) : UiEvent
     data class OnQuerySubmitted(val query: String, val lat: Double, val lon: Double) : UiEvent
   }
 }
