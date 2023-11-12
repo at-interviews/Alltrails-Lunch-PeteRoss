@@ -65,6 +65,7 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
   
   RestaurantsScreen(
     modifier,
+    viewState.showMap,
     viewState.loading,
     viewState.lat,
     viewState.lon,
@@ -77,6 +78,7 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
 @Composable
 fun RestaurantsScreen(
   modifier: Modifier = Modifier,
+  shouldShowMapInitially: Boolean,
   isLoading: Boolean,
   lat: Double,
   lon: Double,
@@ -89,7 +91,7 @@ fun RestaurantsScreen(
   ) {
     SearchBar(onUiEvent, lat, lon)
 
-    var showMap by remember { mutableStateOf(false) }
+    var showMap by remember { mutableStateOf(shouldShowMapInitially) }
     Box(modifier = Modifier.fillMaxSize()) {
       if (isLoading) {
         CircularProgressIndicator(
@@ -113,7 +115,10 @@ fun RestaurantsScreen(
         ,
         containerColor = PrimaryGreen,
         contentColor = Color.White,
-        onClick = { showMap = !showMap },
+        onClick = {
+          showMap = !showMap
+          onUiEvent(MainViewModel.UiEvent.OnScreenToggled(showMap))
+                  },
         icon = { Icon(painter = painterResource(id = fabIcon), contentDescription = stringResource(
           id = fabContentDescription
         )) },

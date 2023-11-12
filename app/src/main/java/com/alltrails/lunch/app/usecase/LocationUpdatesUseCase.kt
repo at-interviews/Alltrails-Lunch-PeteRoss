@@ -16,9 +16,4 @@ class LocationUpdatesUseCase(
       addOnFailureListener { continuation.resumeWith(Result.failure(it)) }
     }
   }
-
-  companion object {
-    private const val UPDATE_INTERVAL_SECS = 10L
-    private const val FASTEST_UPDATE_INTERVAL_SECS = 2L
-  }
 }

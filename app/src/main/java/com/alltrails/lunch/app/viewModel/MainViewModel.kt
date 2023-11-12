@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.viewModelScope
 import com.alltrails.lunch.app.network.Place
 import com.alltrails.lunch.app.network.PlacesService
+import com.alltrails.lunch.app.usecase.DisplayPreferences
 import com.alltrails.lunch.app.usecase.LocationUpdatesUseCase
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -11,9 +12,11 @@ import java.text.NumberFormat
 @SuppressLint("MissingPermission")
 class MainViewModel(
   private val placesService: PlacesService,
-  private val locationProvider: LocationUpdatesUseCase
+  private val locationProvider: LocationUpdatesUseCase,
+  private val displayPreferences: DisplayPreferences,
   ): BaseViewModel<RestaurantsViewState, MainViewModel.Action, MainViewModel.UiEvent>(
     RestaurantsViewState(
+      showMap = displayPreferences.shouldShowMap,
       lat = 43.0,
       lon = -88.0,
       results = listOf(),
@@ -53,7 +56,7 @@ class MainViewModel(
     when(event) {
       is UiEvent.OnFavoriteToggled ->Unit // TODO()
       is UiEvent.OnQuerySubmitted -> handleQuerySubmitted(event.query, event.lat, event.lon)
-      UiEvent.OnScreenToggled -> Unit // TODO()
+      is UiEvent.OnScreenToggled -> displayPreferences.shouldShowMap = event.shouldShowMap
     }
   }
 
@@ -74,7 +77,7 @@ class MainViewModel(
   }
 
   sealed interface UiEvent {
-    object OnScreenToggled: UiEvent
+    data class OnScreenToggled(val shouldShowMap: Boolean): UiEvent
     data class OnFavoriteToggled(val id: String, val favorite: Boolean) : UiEvent
     data class OnQuerySubmitted(val query: String, val lat: Double, val lon: Double) : UiEvent
   }

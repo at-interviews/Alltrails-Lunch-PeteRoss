@@ -2,6 +2,7 @@ package com.alltrails.lunch.app.viewModel
 
 data class RestaurantsViewState(
   val loading: Boolean = true,
+  val showMap: Boolean = false,
   val lat: Double,
   val lon: Double,
   val results: List<Restaurant>
