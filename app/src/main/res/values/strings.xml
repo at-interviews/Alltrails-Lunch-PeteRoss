@@ -12,4 +12,7 @@
     <string name="main_fab_list">List</string>
     <string name="main_fab_content_description_show_map">Show Map</string>
     <string name="main_fab_content_description_show_list">Show List</string>
+
+    <string name="restaurant_open">Open</string>
+    <string name="restaurant_closed">Closed</string>
 </resources>

@@ -45,7 +45,7 @@ fun RestaurantListItem(
     restaurantName = restaurant.name,
     rating = restaurant.rating,
     ratingsCount = restaurant.ratingsCount,
-    supportingText = restaurant.supportingText,
+    supportingText = stringResource(id = restaurant.supportingTextRes),
     isFavorite = restaurant.isFavorite,
     onFavoriteClicked = onFavoriteClicked,
     modifier = modifier,

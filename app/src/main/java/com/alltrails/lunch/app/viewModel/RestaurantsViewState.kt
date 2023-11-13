@@ -1,5 +1,7 @@
 package com.alltrails.lunch.app.viewModel
 
+import androidx.annotation.StringRes
+
 data class RestaurantsViewState(
   val loading: Boolean = true,
   val showMap: Boolean = false,
@@ -14,7 +16,7 @@ data class Restaurant(
   val imageUrl: String?,
   val rating: String,
   val ratingsCount: String,
-  val supportingText: String,
+  @StringRes val supportingTextRes: Int,
   val isFavorite: Boolean,
   val lat: Double,
   val lon: Double,
