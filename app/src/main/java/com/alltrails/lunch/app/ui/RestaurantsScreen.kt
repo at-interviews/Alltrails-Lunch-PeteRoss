@@ -1,9 +1,5 @@
 package com.alltrails.lunch.app.ui
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +15,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,15 +31,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.alltrails.lunch.app.R
+import com.alltrails.lunch.app.ui.provider.RestaurantsProvider
 import com.alltrails.lunch.app.ui.theme.AllTrailsLunchTheme
 import com.alltrails.lunch.app.ui.theme.Background
 import com.alltrails.lunch.app.ui.theme.Padding1_5x
@@ -54,14 +48,6 @@ import com.alltrails.lunch.app.ui.theme.PrimaryGreen
 import com.alltrails.lunch.app.viewModel.MainViewModel
 import com.alltrails.lunch.app.viewModel.Restaurant
 import com.alltrails.lunch.app.viewModel.RestaurantsViewState
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MarkerInfoWindow
-import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -101,7 +87,7 @@ fun RestaurantsScreen(
     var showMap by remember { mutableStateOf(shouldShowMapInitially) }
     val onFavoriteClick: (String) -> Unit = { onUiEvent(MainViewModel.UiEvent.OnFavoriteToggled(it)) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Background)) {
       if (isLoading) {
         CircularProgressIndicator(
           modifier = Modifier
@@ -111,11 +97,11 @@ fun RestaurantsScreen(
           trackColor = MaterialTheme.colorScheme.secondary,
         )
       } else if (showMap) {
-        Map(lat, lon, zoom, restaurants, onFavoriteClick) { latlng, zoom ->
+        RestaurantsMap(lat, lon, zoom, restaurants, onFavoriteClick) { latlng, zoom ->
           onUiEvent(MainViewModel.UiEvent.OnMapMoved(latlng, zoom))
         }
       } else {
-        List(restaurants, onFavoriteClick)
+        RestaurantsList(restaurants, onFavoriteClick)
       }
 
       val fabIcon = if (showMap) R.drawable.list else R.drawable.map
@@ -143,7 +129,7 @@ fun RestaurantsScreen(
 }
 
 @Composable
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 private fun SearchBar(
   lat: Double,
   lon: Double,
@@ -183,11 +169,11 @@ private fun SearchBar(
 }
 
 @Composable
-private fun List(
+private fun RestaurantsList(
   restaurants: List<Restaurant>,
   onFavoriteClick: (String) -> Unit,
   ) {
-  LazyColumn(modifier = Modifier.background(Background)) {
+  LazyColumn {
     items(count = restaurants.size) {
       RestaurantListItem(
         restaurant = restaurants[it],
@@ -198,86 +184,21 @@ private fun List(
   }
 }
 
-@Composable
-private fun Map(
-  lat: Double,
-  lon: Double,
-  zoom: Float,
-  restaurants: List<Restaurant>,
-  onFavoriteClick: (String) -> Unit,
-  onMapMoved: (LatLng, Float) -> Unit,
-  ) {
-  val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(LatLng(lat, lon), zoom)
-  }
-
-  LaunchedEffect(cameraPositionState.isMoving) {
-    if (!cameraPositionState.isMoving) {
-      onMapMoved(cameraPositionState.position.target, cameraPositionState.position.zoom)
-    }
-  }
-
-  GoogleMap(
-    modifier = Modifier.fillMaxSize(),
-    cameraPositionState = cameraPositionState,
-
-  ) {
-    restaurants.forEach { restaurant ->
-      val context = LocalContext.current
-      MarkerInfoWindow(
-        state = rememberMarkerState(position = LatLng(restaurant.lat, restaurant.lon)),
-        icon = bitmapDescriptorFromVector(context, R.drawable.pin_resting),
-        onInfoWindowClose = {
-          it.setIcon(
-            bitmapDescriptorFromVector(
-              context,
-              R.drawable.pin_resting
-            )
-          )
-        },
-        onClick = {
-          it.setIcon(bitmapDescriptorFromVector(context, R.drawable.pin_selected))
-          false
-        },
-        onInfoWindowClick = {
-          Toast.makeText(context, R.string.map_popover_cannot_bookmark_message, Toast.LENGTH_SHORT).show()
-        }
-      ) {
-        // Using this Compose GoogleMap, you are unable to interact with the content within a window
-        // https://github.com/googlemaps/android-maps-compose/issues/200
-        // This is because the Map renders the Composable as an image, as described here
-        // https://stackoverflow.com/questions/15924045/how-to-make-the-content-in-the-marker-info-window-clickable-in-android
-        RestaurantListItem(
-          restaurant = restaurant,
-          onFavoriteClicked = onFavoriteClick,
-          modifier = Modifier.padding(horizontal = 24.dp, vertical = Padding1x)
-        )
-      }
-    }
-  }
-}
-
-//@Preview
-//@Composable
-//fun RestaurantsScreenPreview() {
-//  AllTrailsLunchTheme {
-//    RestaurantsScreen()
-//  }
-//}
-
 @Preview
 @Composable
-fun SearchbarPreview() {
+fun RestaurantsScreenPreview(
+  @PreviewParameter(RestaurantsProvider::class) restaurants: List<Restaurant>
+) {
   AllTrailsLunchTheme {
-    SearchBar(0.0, 0.0) {}
-  }
-}
-
-private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
-  return ContextCompat.getDrawable(context, vectorResId)?.run {
-    setBounds(0, 0, intrinsicWidth, intrinsicHeight)
-    val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
-    draw(Canvas(bitmap))
-    BitmapDescriptorFactory.fromBitmap(bitmap)
+    RestaurantsScreen(
+      modifier = Modifier,
+      shouldShowMapInitially = false,
+      isLoading = false,
+      lat = 0.0,
+      lon = 0.0,
+      zoom = 12f,
+      restaurants = restaurants,
+      onUiEvent = { },
+    )
   }
 }
