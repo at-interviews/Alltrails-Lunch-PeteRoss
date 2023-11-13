@@ -1,6 +1,7 @@
 package com.alltrails.lunch.app.usecase
 
 import com.alltrails.lunch.app.R
+import com.alltrails.lunch.app.manager.FavoritesManager
 import com.alltrails.lunch.app.network.Place
 import com.alltrails.lunch.app.network.PlacesService
 import com.alltrails.lunch.app.viewstate.Restaurant

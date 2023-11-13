@@ -2,8 +2,8 @@ package com.alltrails.lunch.app.viewModel
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.viewModelScope
-import com.alltrails.lunch.app.usecase.DisplayPreferencesManager
-import com.alltrails.lunch.app.usecase.FavoritesManager
+import com.alltrails.lunch.app.manager.DisplayPreferencesManager
+import com.alltrails.lunch.app.manager.FavoritesManager
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
 import com.alltrails.lunch.app.usecase.LocationUseCase
 import com.alltrails.lunch.app.viewstate.Restaurant

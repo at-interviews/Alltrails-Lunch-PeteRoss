@@ -1,4 +1,4 @@
-package com.alltrails.lunch.app.usecase
+package com.alltrails.lunch.app.manager
 
 import android.content.SharedPreferences
 import androidx.core.content.edit

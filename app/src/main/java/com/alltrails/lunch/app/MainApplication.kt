@@ -1,12 +1,12 @@
 package com.alltrails.lunch.app
 
 import android.app.Application
+import com.alltrails.lunch.app.manager.DisplayPreferencesManager
+import com.alltrails.lunch.app.manager.DisplayPreferencesManager.Companion.PREF_NAME_DISPLAY_PREFS
+import com.alltrails.lunch.app.manager.FavoritesManager
+import com.alltrails.lunch.app.manager.FavoritesManager.Companion.PREF_NAME_FAVORITES_MANAGER
 import com.alltrails.lunch.app.network.PlacesService
 import com.alltrails.lunch.app.network.createRetrofitClient
-import com.alltrails.lunch.app.usecase.DisplayPreferencesManager
-import com.alltrails.lunch.app.usecase.DisplayPreferencesManager.Companion.PREF_NAME_DISPLAY_PREFS
-import com.alltrails.lunch.app.usecase.FavoritesManager
-import com.alltrails.lunch.app.usecase.FavoritesManager.Companion.PREF_NAME_FAVORITES_MANAGER
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
 import com.alltrails.lunch.app.usecase.LocationUseCase
 import com.alltrails.lunch.app.viewModel.RestaurantsViewModel
@@ -40,7 +40,7 @@ class MainApplication: Application() {
           singleOf(::LocationUseCase)
           singleOf(::FindRestaurantsUseCase)
           single { params -> this@MainApplication.getSharedPreferences(params.get(), MODE_PRIVATE) }
-          single { DisplayPreferencesManager(get(parameters = { parametersOf(PREF_NAME_DISPLAY_PREFS) }))}
+          single { DisplayPreferencesManager(get(parameters = { parametersOf(PREF_NAME_DISPLAY_PREFS) })) }
           single { FavoritesManager(get(parameters = { parametersOf(PREF_NAME_FAVORITES_MANAGER) })) }
         }
       )

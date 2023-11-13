@@ -1,7 +1,9 @@
 package com.alltrails.lunch.app.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -17,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.alltrails.lunch.app.R
+import com.alltrails.lunch.app.ui.theme.Padding1x
 import com.alltrails.lunch.app.ui.theme.PrimaryGreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -47,8 +51,15 @@ fun MainScreen() {
     LocationPermissionHandler(
       modifier = Modifier.padding(padding),
       onPermissionDenied = { modifier, onPermissionRequested ->
-        Column(modifier = modifier) {
-          Text(stringResource(id = R.string.permission_denied_explainer))
+        Column(
+          modifier = modifier.padding(Padding1x).fillMaxSize(),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+        ) {
+          Text(
+            stringResource(id = R.string.permission_denied_explainer),
+            textAlign = TextAlign.Center,
+            )
           Button(onClick = onPermissionRequested) {
             Text(stringResource(id = R.string.request_location_permissions_button))
           }
