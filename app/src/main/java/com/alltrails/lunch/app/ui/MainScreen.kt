@@ -11,16 +11,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.alltrails.lunch.app.R
+import com.alltrails.lunch.app.ui.theme.PrimaryGreen
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
+  SetStatusBarColor(color = PrimaryGreen)
   Scaffold(
     topBar = {
       TopAppBar(
@@ -53,6 +58,14 @@ fun MainScreen() {
         RestaurantsScreen(modifier)
       }
     )
+  }
+}
+
+@Composable
+fun SetStatusBarColor(color: Color) {
+  val systemUiController = rememberSystemUiController()
+  SideEffect {
+    systemUiController.setSystemBarsColor(color)
   }
 }
 

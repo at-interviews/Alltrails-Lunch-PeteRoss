@@ -61,6 +61,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
     implementation("com.google.maps.android:maps-compose:4.1.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
