@@ -1,4 +1,4 @@
-package com.alltrails.lunch.app.viewModel
+package com.alltrails.lunch.app.viewstate
 
 import androidx.annotation.StringRes
 

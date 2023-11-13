@@ -3,7 +3,7 @@ package com.alltrails.lunch.app.usecase
 import com.alltrails.lunch.app.R
 import com.alltrails.lunch.app.network.Place
 import com.alltrails.lunch.app.network.PlacesService
-import com.alltrails.lunch.app.viewModel.Restaurant
+import com.alltrails.lunch.app.viewstate.Restaurant
 import java.text.NumberFormat
 
 class FindRestaurantsUseCase(

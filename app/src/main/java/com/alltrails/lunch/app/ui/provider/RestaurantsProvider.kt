@@ -2,7 +2,7 @@ package com.alltrails.lunch.app.ui.provider
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.alltrails.lunch.app.R
-import com.alltrails.lunch.app.viewModel.Restaurant
+import com.alltrails.lunch.app.viewstate.Restaurant
 
 class RestaurantsProvider: PreviewParameterProvider<List<Restaurant>> {
   override val values: Sequence<List<Restaurant>>

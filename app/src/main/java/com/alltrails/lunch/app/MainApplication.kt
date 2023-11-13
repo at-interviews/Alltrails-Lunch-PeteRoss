@@ -3,13 +3,13 @@ package com.alltrails.lunch.app
 import android.app.Application
 import com.alltrails.lunch.app.network.PlacesService
 import com.alltrails.lunch.app.network.createRetrofitClient
-import com.alltrails.lunch.app.usecase.DisplayPreferences
-import com.alltrails.lunch.app.usecase.DisplayPreferences.Companion.PREF_NAME_DISPLAY_PREFS
+import com.alltrails.lunch.app.usecase.DisplayPreferencesManager
+import com.alltrails.lunch.app.usecase.DisplayPreferencesManager.Companion.PREF_NAME_DISPLAY_PREFS
 import com.alltrails.lunch.app.usecase.FavoritesManager
 import com.alltrails.lunch.app.usecase.FavoritesManager.Companion.PREF_NAME_FAVORITES_MANAGER
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
 import com.alltrails.lunch.app.usecase.LocationUseCase
-import com.alltrails.lunch.app.viewModel.MainViewModel
+import com.alltrails.lunch.app.viewModel.RestaurantsViewModel
 import com.google.android.gms.location.LocationServices
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -33,14 +33,14 @@ class MainApplication: Application() {
       androidContext(this@MainApplication)
       modules(
         module {
-          viewModelOf(::MainViewModel)
+          viewModelOf(::RestaurantsViewModel)
           single(createdAtStart = true) { createRetrofitClient() }
           single { get<Retrofit>().create(PlacesService::class.java) }
           single { LocationServices.getFusedLocationProviderClient(this@MainApplication) }
           singleOf(::LocationUseCase)
           singleOf(::FindRestaurantsUseCase)
           single { params -> this@MainApplication.getSharedPreferences(params.get(), MODE_PRIVATE) }
-          single { DisplayPreferences(get(parameters = { parametersOf(PREF_NAME_DISPLAY_PREFS) }))}
+          single { DisplayPreferencesManager(get(parameters = { parametersOf(PREF_NAME_DISPLAY_PREFS) }))}
           single { FavoritesManager(get(parameters = { parametersOf(PREF_NAME_FAVORITES_MANAGER) })) }
         }
       )

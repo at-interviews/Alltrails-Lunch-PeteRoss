@@ -45,13 +45,13 @@ import com.alltrails.lunch.app.ui.theme.Background
 import com.alltrails.lunch.app.ui.theme.Padding1_5x
 import com.alltrails.lunch.app.ui.theme.Padding1x
 import com.alltrails.lunch.app.ui.theme.PrimaryGreen
-import com.alltrails.lunch.app.viewModel.MainViewModel
-import com.alltrails.lunch.app.viewModel.Restaurant
-import com.alltrails.lunch.app.viewModel.RestaurantsViewState
+import com.alltrails.lunch.app.viewModel.RestaurantsViewModel
+import com.alltrails.lunch.app.viewstate.Restaurant
+import com.alltrails.lunch.app.viewstate.RestaurantsViewState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel = koinViewModel()) {
+fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : RestaurantsViewModel = koinViewModel()) {
   val viewState: RestaurantsViewState by viewModel.viewState.collectAsState()
   
   RestaurantsScreen(
@@ -75,7 +75,7 @@ fun RestaurantsScreen(
   lon: Double,
   zoom: Float,
   restaurants: List<Restaurant>,
-  onUiEvent: (MainViewModel.UiEvent) -> Unit
+  onUiEvent: (RestaurantsViewModel.UiEvent) -> Unit
 ) {
   Column(modifier = modifier
     .fillMaxSize()
@@ -85,7 +85,7 @@ fun RestaurantsScreen(
 
     Divider()
     var showMap by remember { mutableStateOf(shouldShowMapInitially) }
-    val onFavoriteClick: (String) -> Unit = { onUiEvent(MainViewModel.UiEvent.OnFavoriteToggled(it)) }
+    val onFavoriteClick: (String) -> Unit = { onUiEvent(RestaurantsViewModel.UiEvent.OnFavoriteToggled(it)) }
 
     Box(modifier = Modifier.fillMaxSize().background(Background)) {
       if (isLoading) {
@@ -98,7 +98,7 @@ fun RestaurantsScreen(
         )
       } else if (showMap) {
         RestaurantsMap(lat, lon, zoom, restaurants, onFavoriteClick) { latlng, zoom ->
-          onUiEvent(MainViewModel.UiEvent.OnMapMoved(latlng, zoom))
+          onUiEvent(RestaurantsViewModel.UiEvent.OnMapMoved(latlng, zoom))
         }
       } else {
         RestaurantsList(restaurants, onFavoriteClick)
@@ -117,7 +117,7 @@ fun RestaurantsScreen(
         contentColor = Color.White,
         onClick = {
           showMap = !showMap
-          onUiEvent(MainViewModel.UiEvent.OnScreenToggled(showMap))
+          onUiEvent(RestaurantsViewModel.UiEvent.OnScreenToggled(showMap))
                   },
         icon = { Icon(painter = painterResource(id = fabIcon), contentDescription = stringResource(
           id = fabContentDescription
@@ -133,7 +133,7 @@ fun RestaurantsScreen(
 private fun SearchBar(
   lat: Double,
   lon: Double,
-  onUiEvent: (MainViewModel.UiEvent) -> Unit,
+  onUiEvent: (RestaurantsViewModel.UiEvent) -> Unit,
 ) {
 
   val keyboardController = LocalSoftwareKeyboardController.current
@@ -154,7 +154,7 @@ private fun SearchBar(
     singleLine = true,
     keyboardActions = KeyboardActions(
       onSearch = {
-        onUiEvent(MainViewModel.UiEvent.OnQuerySubmitted(query, lat, lon))
+        onUiEvent(RestaurantsViewModel.UiEvent.OnQuerySubmitted(query, lat, lon))
         keyboardController?.hide()
       }
     ),

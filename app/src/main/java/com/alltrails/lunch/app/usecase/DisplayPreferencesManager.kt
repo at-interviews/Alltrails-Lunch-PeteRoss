@@ -3,7 +3,7 @@ package com.alltrails.lunch.app.usecase
 import android.content.SharedPreferences
 import androidx.core.content.edit
 
-class DisplayPreferences(
+class DisplayPreferencesManager(
   private val sharedPreferences: SharedPreferences
 ) {
 

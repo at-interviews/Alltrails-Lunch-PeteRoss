@@ -2,22 +2,24 @@ package com.alltrails.lunch.app.viewModel
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.viewModelScope
-import com.alltrails.lunch.app.usecase.DisplayPreferences
+import com.alltrails.lunch.app.usecase.DisplayPreferencesManager
 import com.alltrails.lunch.app.usecase.FavoritesManager
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
 import com.alltrails.lunch.app.usecase.LocationUseCase
+import com.alltrails.lunch.app.viewstate.Restaurant
+import com.alltrails.lunch.app.viewstate.RestaurantsViewState
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
-class MainViewModel(
+class RestaurantsViewModel(
   private val findRestaurants: FindRestaurantsUseCase,
   private val currentLocation: LocationUseCase,
-  private val displayPreferences: DisplayPreferences,
+  private val displayPreferencesManager: DisplayPreferencesManager,
   private val favoritesManager: FavoritesManager,
-  ): BaseViewModel<RestaurantsViewState, MainViewModel.Action, MainViewModel.UiEvent>(
+  ): BaseViewModel<RestaurantsViewState, RestaurantsViewModel.Action, RestaurantsViewModel.UiEvent>(
     RestaurantsViewState(
-      showMap = displayPreferences.shouldShowMap,
+      showMap = displayPreferencesManager.shouldShowMap,
       lat = 43.0,
       lon = -88.0,
     )
@@ -56,7 +58,7 @@ class MainViewModel(
     when(event) {
       is UiEvent.OnFavoriteToggled -> handleFavoriteToggled(event.id)
       is UiEvent.OnQuerySubmitted -> handleQuerySubmitted(event.query, event.lat, event.lon)
-      is UiEvent.OnScreenToggled -> displayPreferences.shouldShowMap = event.shouldShowMap
+      is UiEvent.OnScreenToggled -> displayPreferencesManager.shouldShowMap = event.shouldShowMap
       is UiEvent.OnMapMoved -> state.dispatch(Action.MapMoved(event.latlng, event.zoom))
     }
   }

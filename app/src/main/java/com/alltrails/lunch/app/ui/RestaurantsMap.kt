@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat
 import com.alltrails.lunch.app.R
 import com.alltrails.lunch.app.ui.theme.AllTrailsLunchTheme
 import com.alltrails.lunch.app.ui.theme.Padding1x
-import com.alltrails.lunch.app.viewModel.Restaurant
+import com.alltrails.lunch.app.viewstate.Restaurant
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition

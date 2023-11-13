@@ -32,7 +32,7 @@ import com.alltrails.lunch.app.ui.theme.PaddingInner
 import com.alltrails.lunch.app.ui.theme.RestaurantItemImageHeight
 import com.alltrails.lunch.app.ui.theme.RestaurantItemImageWidth
 import com.alltrails.lunch.app.ui.theme.SpacingSmall
-import com.alltrails.lunch.app.viewModel.Restaurant
+import com.alltrails.lunch.app.viewstate.Restaurant
 
 @Composable
 fun RestaurantListItem(
