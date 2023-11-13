@@ -6,6 +6,7 @@ import com.alltrails.lunch.app.usecase.DisplayPreferences
 import com.alltrails.lunch.app.usecase.FavoritesManager
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
 import com.alltrails.lunch.app.usecase.LocationUseCase
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
@@ -47,6 +48,7 @@ class MainViewModel(
         )
       }
       is Action.LoadingResults -> state.copy(loading = true)
+      is Action.MapMoved -> state.copy(lat = action.latlng.latitude, lon = action.latlng.longitude, zoom = action.zoom)
     }
   }
 
@@ -55,6 +57,7 @@ class MainViewModel(
       is UiEvent.OnFavoriteToggled -> handleFavoriteToggled(event.id)
       is UiEvent.OnQuerySubmitted -> handleQuerySubmitted(event.query, event.lat, event.lon)
       is UiEvent.OnScreenToggled -> displayPreferences.shouldShowMap = event.shouldShowMap
+      is UiEvent.OnMapMoved -> state.dispatch(Action.MapMoved(event.latlng, event.zoom))
     }
   }
 
@@ -73,6 +76,7 @@ class MainViewModel(
     data class OnLocationUpdated(val lat: Double, val lon: Double): Action
     data class OnResultsUpdated(val restaurants: List<Restaurant>): Action
     data class OnFavoriteToggled(val restaurantId: String): Action
+    data class MapMoved(val latlng: LatLng, val zoom: Float): Action
     object LoadingResults: Action
   }
 
@@ -80,5 +84,6 @@ class MainViewModel(
     data class OnScreenToggled(val shouldShowMap: Boolean): UiEvent
     data class OnFavoriteToggled(val id: String) : UiEvent
     data class OnQuerySubmitted(val query: String, val lat: Double, val lon: Double) : UiEvent
+    data class OnMapMoved(val latlng: LatLng, val zoom: Float) : UiEvent
   }
 }

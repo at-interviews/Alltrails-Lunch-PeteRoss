@@ -7,6 +7,7 @@ data class RestaurantsViewState(
   val showMap: Boolean = false,
   val lat: Double,
   val lon: Double,
+  val zoom: Float = 12f,
   val results: List<Restaurant> = listOf()
 )
 

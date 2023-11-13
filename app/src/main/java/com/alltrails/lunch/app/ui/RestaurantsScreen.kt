@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,12 +73,12 @@ fun RestaurantsScreen(modifier: Modifier = Modifier, viewModel : MainViewModel =
     viewState.loading,
     viewState.lat,
     viewState.lon,
+    viewState.zoom,
     viewState.results,
     viewModel::handleUIEvent
   )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RestaurantsScreen(
   modifier: Modifier = Modifier,
@@ -85,6 +86,7 @@ fun RestaurantsScreen(
   isLoading: Boolean,
   lat: Double,
   lon: Double,
+  zoom: Float,
   restaurants: List<Restaurant>,
   onUiEvent: (MainViewModel.UiEvent) -> Unit
 ) {
@@ -108,7 +110,9 @@ fun RestaurantsScreen(
           trackColor = MaterialTheme.colorScheme.secondary,
         )
       } else if (showMap) {
-        Map(lat, lon, restaurants, onFavoriteClick)
+        Map(lat, lon, zoom, restaurants, onFavoriteClick) { latlng, zoom ->
+          onUiEvent(MainViewModel.UiEvent.OnMapMoved(latlng, zoom))
+        }
       } else {
         List(restaurants, onFavoriteClick)
       }
@@ -197,16 +201,25 @@ private fun List(
 private fun Map(
   lat: Double,
   lon: Double,
+  zoom: Float,
   restaurants: List<Restaurant>,
   onFavoriteClick: (String) -> Unit,
+  onMapMoved: (LatLng, Float) -> Unit,
   ) {
   val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(LatLng(lat, lon), 12f)
+    position = CameraPosition.fromLatLngZoom(LatLng(lat, lon), zoom)
+  }
+
+  LaunchedEffect(cameraPositionState.isMoving) {
+    if (!cameraPositionState.isMoving) {
+      onMapMoved(cameraPositionState.position.target, cameraPositionState.position.zoom)
+    }
   }
 
   GoogleMap(
     modifier = Modifier.fillMaxSize(),
     cameraPositionState = cameraPositionState,
+
   ) {
     restaurants.forEach { restaurant ->
       val context = LocalContext.current
