@@ -12,15 +12,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -89,8 +92,9 @@ fun RestaurantsScreen(
     .fillMaxSize()
     .background(Color.White)
   ) {
-    SearchBar(onUiEvent, lat, lon)
+    SearchBar(lat, lon, onUiEvent)
 
+    Divider()
     var showMap by remember { mutableStateOf(shouldShowMapInitially) }
     val onFavoriteClick: (String) -> Unit = { onUiEvent(MainViewModel.UiEvent.OnFavoriteToggled(it)) }
 
@@ -117,6 +121,7 @@ fun RestaurantsScreen(
           .align(Alignment.BottomCenter)
           .padding(Padding1_5x)
         ,
+        shape = RoundedCornerShape(percent = 50),
         containerColor = PrimaryGreen,
         contentColor = Color.White,
         onClick = {
@@ -129,19 +134,18 @@ fun RestaurantsScreen(
         text = { Text(text = stringResource(id = fabText)) },
       )
     }
-
   }
 }
 
 @Composable
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 private fun SearchBar(
-  onUiEvent: (MainViewModel.UiEvent) -> Unit,
   lat: Double,
-  lon: Double
+  lon: Double,
+  onUiEvent: (MainViewModel.UiEvent) -> Unit,
 ) {
-  val keyboardController = LocalSoftwareKeyboardController.current
 
+  val keyboardController = LocalSoftwareKeyboardController.current
   var query: String by remember { mutableStateOf("") }
   TextField(
     modifier = Modifier
@@ -150,13 +154,12 @@ private fun SearchBar(
         start = Padding1_5x,
         end = Padding1_5x,
         bottom = Padding1x,
-      )
-      .clip(shape = RoundedCornerShape(Padding1x))
-      .background(Background),
+      ),
     value = query,
+    shape = CircleShape,
     leadingIcon = { Image(painter = painterResource(id = R.drawable.search), null) },
     onValueChange = { query = it },
-    placeholder = { Text(text = "Search restaurants") },
+    placeholder = { Text(text = stringResource(id = R.string.search_bar_hint_text)) },
     singleLine = true,
     keyboardActions = KeyboardActions(
       onSearch = {
@@ -165,6 +168,12 @@ private fun SearchBar(
       }
     ),
     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+    colors = TextFieldDefaults.colors(
+      disabledTextColor = Color.Transparent,
+      focusedIndicatorColor = Color.Transparent,
+      unfocusedIndicatorColor = Color.Transparent,
+      disabledIndicatorColor = Color.Transparent
+    )
   )
 }
 
@@ -231,11 +240,19 @@ private fun Map(
   }
 }
 
+//@Preview
+//@Composable
+//fun RestaurantsScreenPreview() {
+//  AllTrailsLunchTheme {
+//    RestaurantsScreen()
+//  }
+//}
+
 @Preview
 @Composable
-fun RestaurantsScreenPreview() {
+fun SearchbarPreview() {
   AllTrailsLunchTheme {
-    RestaurantsScreen()
+    SearchBar(0.0, 0.0) {}
   }
 }
 

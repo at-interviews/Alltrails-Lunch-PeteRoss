@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,6 +86,7 @@ fun RestaurantListItem(
           .width(RestaurantItemImageWidth)
           .height(RestaurantItemImageHeight),
         model = request,
+        contentScale = ContentScale.FillHeight,
         contentDescription = null,
         placeholder = painterResource(id = R.drawable.placeholder_image)
       )
@@ -117,12 +119,21 @@ fun RestaurantListItem(
             painter = painterResource(id = R.drawable.star),
             contentDescription = null
           )
+
           Spacer(modifier = Modifier.width(2.dp))
-          Text(text = rating, style = MaterialTheme.typography.titleSmall)
-          Spacer(modifier = Modifier.width(4.dp))
-          Text(text = stringResource(id = R.string.bullet_separator))
-          Spacer(modifier = Modifier.width(4.dp))
-          Text(text = ratingsCount, style = MaterialTheme.typography.bodySmall)
+
+          Text(
+            text = rating,
+            style = MaterialTheme.typography.titleSmall
+          )
+          Text(
+            text = stringResource(id = R.string.bullet_separator),
+            modifier = Modifier.padding(horizontal = 4.dp)
+          )
+          Text(
+            text = stringResource(id = R.string.restaurant_ratings_count_wrapper, ratingsCount),
+            style = MaterialTheme.typography.bodySmall
+          )
         }
 
         Spacer(modifier = Modifier.height(SpacingSmall))
@@ -142,7 +153,7 @@ fun RestaurantListItemPreview() {
       imageUrl = "imageUrl",
       restaurantName = "Cellar Door Provisions",
       rating = "4.8",
-      ratingsCount = "(1,324)",
+      ratingsCount = "1,324",
       supportingText = "It's great!",
       isFavorite = false,
       onFavoriteClicked = {}

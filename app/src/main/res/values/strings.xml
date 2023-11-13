@@ -13,6 +13,8 @@
     <string name="main_fab_content_description_show_map">Show Map</string>
     <string name="main_fab_content_description_show_list">Show List</string>
 
+    <string name="search_bar_hint_text">Search restaurants</string>
+    <string name="restaurant_ratings_count_wrapper">(%1$s)</string>
     <string name="restaurant_open">Open</string>
     <string name="restaurant_closed">Closed</string>
 </resources>
