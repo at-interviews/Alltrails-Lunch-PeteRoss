@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.alltrails.lunch.app.usecase.DisplayPreferences
 import com.alltrails.lunch.app.usecase.FavoritesManager
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
-import com.alltrails.lunch.app.usecase.LocationUpdatesUseCase
+import com.alltrails.lunch.app.usecase.LocationUseCase
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
 class MainViewModel(
   private val findRestaurantsUseCase: FindRestaurantsUseCase,
-  private val locationProvider: LocationUpdatesUseCase,
+  private val locationUseCase: LocationUseCase,
   private val displayPreferences: DisplayPreferences,
   private val favoritesManager: FavoritesManager,
   ): BaseViewModel<RestaurantsViewState, MainViewModel.Action, MainViewModel.UiEvent>(
@@ -19,13 +19,12 @@ class MainViewModel(
       showMap = displayPreferences.shouldShowMap,
       lat = 43.0,
       lon = -88.0,
-      results = listOf(),
     )
   ) {
 
   init {
     viewModelScope.launch {
-      locationProvider.getLastKnownLocation()?.let {
+      locationUseCase()?.let {
         state.dispatch(Action.OnLocationUpdated(it.latitude, it.longitude))
         handleQuerySubmitted("", it.latitude, it.longitude)
       }
@@ -45,7 +44,7 @@ class MainViewModel(
           if (it.id == action.restaurantId) alteredRestaurant else it
         })
       }
-      is Action.OnQuerySubmitted -> state.copy(loading = true)
+      is Action.LoadingResults -> state.copy(loading = true)
     }
   }
 
@@ -63,17 +62,16 @@ class MainViewModel(
   }
 
   private fun handleQuerySubmitted(query: String, lat: Double, lon: Double) = viewModelScope.launch {
-    state.dispatch(Action.OnQuerySubmitted)
-    val results = findRestaurantsUseCase(lat, lon, query)
+    state.dispatch(Action.LoadingResults)
+    val results = findRestaurantsUseCase(query, lat, lon)
     state.dispatch(Action.OnResultsUpdated(results))
   }
-
 
   sealed interface Action {
     data class OnLocationUpdated(val lat: Double, val lon: Double): Action
     data class OnResultsUpdated(val restaurants: List<Restaurant>): Action
     data class OnFavoriteToggled(val restaurantId: String): Action
-    object OnQuerySubmitted: Action
+    object LoadingResults: Action
   }
 
   sealed interface UiEvent {

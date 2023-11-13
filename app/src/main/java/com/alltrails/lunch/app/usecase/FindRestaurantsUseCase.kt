@@ -10,7 +10,7 @@ class FindRestaurantsUseCase(
   private val placesService: PlacesService,
   private val favoritesManager: FavoritesManager,
 ) {
-  suspend operator fun invoke(lat: Double, lon: Double, query: String?): List<Restaurant> {
+  suspend operator fun invoke(query: String?, lat: Double, lon: Double): List<Restaurant> {
     return placesService.nearbyRestaurants("$lat,$lon", query.orEmpty())?.results?.map {
         Restaurant(
           it.name,

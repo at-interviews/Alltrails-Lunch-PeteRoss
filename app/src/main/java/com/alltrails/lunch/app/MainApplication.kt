@@ -8,7 +8,7 @@ import com.alltrails.lunch.app.usecase.DisplayPreferences.Companion.PREF_NAME_DI
 import com.alltrails.lunch.app.usecase.FavoritesManager
 import com.alltrails.lunch.app.usecase.FavoritesManager.Companion.PREF_NAME_FAVORITES_MANAGER
 import com.alltrails.lunch.app.usecase.FindRestaurantsUseCase
-import com.alltrails.lunch.app.usecase.LocationUpdatesUseCase
+import com.alltrails.lunch.app.usecase.LocationUseCase
 import com.alltrails.lunch.app.viewModel.MainViewModel
 import com.google.android.gms.location.LocationServices
 import org.koin.android.ext.koin.androidContext
@@ -37,7 +37,7 @@ class MainApplication: Application() {
           single(createdAtStart = true) { createRetrofitClient() }
           single { get<Retrofit>().create(PlacesService::class.java) }
           single { LocationServices.getFusedLocationProviderClient(this@MainApplication) }
-          singleOf(::LocationUpdatesUseCase)
+          singleOf(::LocationUseCase)
           singleOf(::FindRestaurantsUseCase)
           single { params -> this@MainApplication.getSharedPreferences(params.get(), MODE_PRIVATE) }
           single { DisplayPreferences(get(parameters = { parametersOf(PREF_NAME_DISPLAY_PREFS) }))}

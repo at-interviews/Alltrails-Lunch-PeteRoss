@@ -7,7 +7,7 @@ data class RestaurantsViewState(
   val showMap: Boolean = false,
   val lat: Double,
   val lon: Double,
-  val results: List<Restaurant>
+  val results: List<Restaurant> = listOf()
 )
 
 data class Restaurant(
