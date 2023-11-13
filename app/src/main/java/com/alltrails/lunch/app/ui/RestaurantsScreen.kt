@@ -55,8 +55,8 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MarkerInfoWindow
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -97,7 +97,9 @@ fun RestaurantsScreen(
     Box(modifier = Modifier.fillMaxSize()) {
       if (isLoading) {
         CircularProgressIndicator(
-          modifier = Modifier.width(64.dp).align(Alignment.Center),
+          modifier = Modifier
+            .width(64.dp)
+            .align(Alignment.Center),
           color = MaterialTheme.colorScheme.surfaceVariant,
           trackColor = MaterialTheme.colorScheme.secondary,
         )
@@ -189,19 +191,18 @@ private fun Map(
   restaurants: List<Restaurant>,
   onFavoriteClick: (String) -> Unit,
   ) {
-  val currentPosition = LatLng(lat, lon)
   val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(currentPosition, 12f)
+    position = CameraPosition.fromLatLngZoom(LatLng(lat, lon), 12f)
   }
 
   GoogleMap(
     modifier = Modifier.fillMaxSize(),
-    cameraPositionState = cameraPositionState
+    cameraPositionState = cameraPositionState,
   ) {
     restaurants.forEach { restaurant ->
       val context = LocalContext.current
       MarkerInfoWindow(
-        state = MarkerState(position = LatLng(restaurant.lat, restaurant.lon)),
+        state = rememberMarkerState(position = LatLng(restaurant.lat, restaurant.lon)),
         icon = bitmapDescriptorFromVector(context, R.drawable.pin_resting),
         onInfoWindowClose = {
           it.setIcon(
@@ -216,6 +217,10 @@ private fun Map(
           false
         }
       ) {
+        // Using this Compose GoogleMap, you are unable to interact with the content within a window
+        // https://github.com/googlemaps/android-maps-compose/issues/200
+        // This is because the Map renders the Composable as an image, as described here
+        // https://stackoverflow.com/questions/15924045/how-to-make-the-content-in-the-marker-info-window-clickable-in-android
         RestaurantListItem(
           restaurant = restaurant,
           onFavoriteClicked = onFavoriteClick,
