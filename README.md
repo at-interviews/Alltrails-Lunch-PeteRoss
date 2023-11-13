@@ -4,6 +4,10 @@
 https://github.com/PeteRossPeteRoss/Alltrails-Lunch/assets/150725075/9113fa37-b820-4d49-9f6f-5b51cd6b1c6a
 
 
+https://github.com/PeteRossPeteRoss/Alltrails-Lunch/assets/150725075/ff20bc07-e0f2-48dc-bb56-37ed638dbdd3
+
+
+
 ## Required Features
 - [x] The app will use the Google Places API for its data source
 - [x] The app will prompt the user for permission to access their current location
