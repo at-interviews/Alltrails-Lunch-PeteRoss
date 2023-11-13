@@ -90,7 +90,7 @@ fun RestaurantListItem(
       )
       Spacer(modifier = Modifier.width(PaddingInner))
       Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.Top) {
           Text(
             text = restaurantName,
             modifier = Modifier.weight(1f),

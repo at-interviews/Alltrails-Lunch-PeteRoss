@@ -12,8 +12,7 @@ class FavoritesManager(
   }
 
   fun toggleFavorite(restaurantId: String) {
-    val isCurrentlyFavorite = isFavorite(restaurantId = restaurantId)
-    sharedPreferences.edit { putBoolean(restaurantId, !isCurrentlyFavorite) }
+    sharedPreferences.edit { putBoolean(restaurantId, !isFavorite(restaurantId = restaurantId)) }
   }
 
   companion object {

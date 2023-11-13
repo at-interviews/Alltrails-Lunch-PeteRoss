@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
 class MainViewModel(
-  private val findRestaurantsUseCase: FindRestaurantsUseCase,
-  private val locationUseCase: LocationUseCase,
+  private val findRestaurants: FindRestaurantsUseCase,
+  private val currentLocation: LocationUseCase,
   private val displayPreferences: DisplayPreferences,
   private val favoritesManager: FavoritesManager,
   ): BaseViewModel<RestaurantsViewState, MainViewModel.Action, MainViewModel.UiEvent>(
@@ -24,7 +24,7 @@ class MainViewModel(
 
   init {
     viewModelScope.launch {
-      locationUseCase()?.let {
+      currentLocation()?.let {
         state.dispatch(Action.OnLocationUpdated(it.latitude, it.longitude))
         handleQuerySubmitted("", it.latitude, it.longitude)
       }
@@ -36,13 +36,15 @@ class MainViewModel(
       is Action.OnLocationUpdated -> state.copy(lat = action.lat, lon = action.lon)
       is Action.OnResultsUpdated -> state.copy(loading = false, results = action.restaurants )
       is Action.OnFavoriteToggled -> {
-        val alteredRestaurant = state.results.find {
-          it.id == action.restaurantId
-        }!!.copy(isFavorite = favoritesManager.isFavorite(action.restaurantId))
-
-        state.copy(results = state.results.map {
-          if (it.id == action.restaurantId) alteredRestaurant else it
-        })
+        state.copy(
+          results = state.results.map {
+            if (it.id == action.restaurantId) {
+              it.copy(isFavorite = favoritesManager.isFavorite(action.restaurantId))
+            } else {
+              it
+            }
+          }
+        )
       }
       is Action.LoadingResults -> state.copy(loading = true)
     }
@@ -63,7 +65,7 @@ class MainViewModel(
 
   private fun handleQuerySubmitted(query: String, lat: Double, lon: Double) = viewModelScope.launch {
     state.dispatch(Action.LoadingResults)
-    val results = findRestaurantsUseCase(query, lat, lon)
+    val results = findRestaurants(query, lat, lon)
     state.dispatch(Action.OnResultsUpdated(results))
   }
 
