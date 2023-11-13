@@ -17,4 +17,6 @@
     <string name="restaurant_ratings_count_wrapper">(%1$s)</string>
     <string name="restaurant_open">Open</string>
     <string name="restaurant_closed">Closed</string>
+
+    <string name="map_popover_cannot_bookmark_message">Cannot add a bookmark from the map =(</string>
 </resources>

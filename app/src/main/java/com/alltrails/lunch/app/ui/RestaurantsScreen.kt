@@ -3,6 +3,7 @@ package com.alltrails.lunch.app.ui
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -237,6 +238,9 @@ private fun Map(
         onClick = {
           it.setIcon(bitmapDescriptorFromVector(context, R.drawable.pin_selected))
           false
+        },
+        onInfoWindowClick = {
+          Toast.makeText(context, R.string.map_popover_cannot_bookmark_message, Toast.LENGTH_SHORT).show()
         }
       ) {
         // Using this Compose GoogleMap, you are unable to interact with the content within a window
