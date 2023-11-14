@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.alltrails.lunch.app.R
-import com.alltrails.lunch.app.ui.theme.Padding1x
+import com.alltrails.lunch.app.ui.theme.Padding1_5x
 import com.alltrails.lunch.app.ui.theme.PrimaryGreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -52,7 +52,7 @@ fun MainScreen() {
       modifier = Modifier.padding(padding),
       onPermissionDenied = { modifier, onPermissionRequested ->
         Column(
-          modifier = modifier.padding(Padding1x).fillMaxSize(),
+          modifier = modifier.padding(Padding1_5x).fillMaxSize(),
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center,
         ) {
@@ -62,6 +62,21 @@ fun MainScreen() {
             )
           Button(onClick = onPermissionRequested) {
             Text(stringResource(id = R.string.request_location_permissions_button))
+          }
+        }
+      },
+      onPermissionsRevoked = { modifier, navigateToSettingsClick ->
+        Column(
+          modifier = modifier.padding(Padding1_5x).fillMaxSize(),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.Center,
+        ) {
+          Text(
+            stringResource(id = R.string.permission_denied_explainer),
+            textAlign = TextAlign.Center,
+            )
+          Button(onClick = navigateToSettingsClick) {
+            Text(stringResource(id = R.string.request_location_permissions_via_settings_button))
           }
         }
       },

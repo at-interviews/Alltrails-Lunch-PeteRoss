@@ -5,6 +5,8 @@
 
     <string name="permission_denied_explainer">You can\'t find nearby restaurants if we don\'t know where you are! Please enable location permissions.</string>
     <string name="request_location_permissions_button">Request Location Permissions</string>
+    <string name="request_location_permissions_via_settings_button">Go To Settings</string>
+
     <string name="bookmark_resting_icon_content_description">Not Saved</string>
     <string name="bookmark_saved_icon_content_description">Saved</string>
 
